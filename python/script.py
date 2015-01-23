@@ -1,6 +1,6 @@
 # Start with: sudo webiopi -d -c /etc/webiopi/config
 import webiopi
-import datetime, time, sys, urllib2
+import datetime, time, sys, urllib2, re
 
 webiopi.setDebug()
 
@@ -12,6 +12,7 @@ from Resetable_timer import vfdClear
 from Resetable_timer import vfdOut
 import gmail_vfd_include; # Support methods
 import gmail_vfd_auth; # Gmail credentials
+import ISY
 
 GPIO = webiopi.GPIO
 #CHECKMAIL = gmail_vfd_include.check_mail
@@ -22,10 +23,12 @@ BUZZ = 8
 
 HOUR_ON  = 8  # Turn Light ON at 08:00
 HOUR_OFF = 18 # Turn Light OFF at 18:00
-LOOP_CNT = 0 
+LOOP_CNT = 60 
 LAST_MAIL_CNT = 0
 NEW_MAIL_CNT = 0
-
+BRAVIATV = '192.168.0.3'
+TVState1 = 0;  TVState2 = 0
+ 
 # Serial Ports, retrieve devices named in the config file
 vfdPort = webiopi.deviceInstance("vfdPort") 
 wgPort  = webiopi.deviceInstance("wgPort")
@@ -36,6 +39,12 @@ wgPort  = webiopi.deviceInstance("wgPort")
 Auth_handler = urllib2.HTTPBasicAuthHandler()
 Auth_handler.add_password('New mail feed', 'https://mail.google.com/',
      gmail_vfd_auth.USERNAME, gmail_vfd_auth.PASSWORD)
+
+# Open connection to ISY, init ISY vars
+myisy = ISY.Isy(addr="192.168.0.10", eventupdates=0)
+myisy.var_set_value('Gmail', 0)
+myisy.var_set_value('TVstate', 0)
+
 
 # Called at WebIOPi startup
 def setup():
@@ -62,14 +71,16 @@ def setup():
 
 # WebIOPi script loop
 def loop():
-    global LOOP_CNT, NEW_MAIL_CNT, LAST_MAIL_CNT, VFDPORT, SUBJECT 
+    global LOOP_CNT, NEW_MAIL_CNT, LAST_MAIL_CNT, VFDPORT, SUBJECT, TVState1, TVState2, BRAVIATV
+
+    t = time.time()
+    ts = datetime.datetime.fromtimestamp(t).strftime('%m/%d-%H:%M')
 
     #webiopi.debug ("LOOPING!")
 
+    #################################################################
     # Check unread gmails once per minute
-    if LOOP_CNT == 0:
-        t = time.time()
-        ts = datetime.datetime.fromtimestamp(t).strftime('%m/%d-%H:%M')
+    if LOOP_CNT == 60:
 
         # Check for new emails, report count and subject of the latest
         GPIO.digitalWrite(YEL2, GPIO.HIGH)
@@ -94,10 +105,39 @@ def loop():
             GPIO.digitalWrite(RED2, GPIO.HIGH)
             LAST_MAIL_CNT = 0
 
+
+    #################################################################
     # Read wireless sensor gateway
     if (wgPort.available() > 0):
-        data = wgPort.readString() 
-        webiopi.debug (data)
+        wgLine = wgPort.readString() 
+        webiopi.debug (wgLine)
+
+      # # Motion detect node
+        if re.search(':N:2:MOTION:B:', wgLine):
+            vfdOut (vfdPort, str(unichr(0x0c)) + ts + " Motion!", 5)
+            myisy.var_set_value('Gmail', 100)
+            myisy.var_set_value('Gmail', 0)
+
+        # Temp/humidity sensor node
+        match = re.search(':N:3:T:(\d+):H:(\d+):B:([0-9.]+):', wgLine)
+        if match:
+            temp = match.group(1)
+            humid = match.group(2)
+            bat = match.group(3)
+            vfdOut (vfdPort, str(unichr(0x0c))+ts+" Temp: "+temp+" Humid: "+humid+" Bat: "+bat, 5)
+
+
+    #################################################################
+    # Check if the TV changes state, update an ISY var if it does
+    TVState1 = gmail_vfd_include.pinger(BRAVIATV, 1)
+    if TVState1 != TVState2:
+      if TVState1:
+        myisy.var_set_value('TVstate', 1)
+        vfdOut (vfdPort, ts + " TV On", 5)
+      else:
+        myisy.var_set_value('TVstate', 0)
+        vfdOut (vfdPort, ts + " TV Off", 5)
+      TVState2 = TVState1
 
     
     # Toggle heartbeat LED each loop

@@ -1,15 +1,5 @@
-<style type="text/css">
-
-    #mailSubj {
-            display: block;
-            margin: 5px 5px 5px 5px;
-            width: 760px;
-            height: 45px;
-            font-size: 12pt;
-            font-weight: bold;
-            color: blue;
-    }
-
+/*<style type="text/css">
+*/
     button {
             display: block;
             margin: 5px 5px 5px 5px;
@@ -18,6 +8,11 @@
             font-size: 24pt;
             font-weight: bold;
             color: blue;
+    }
+
+    #mailSubj{
+            font-size: 12pt;
+            width: 500px;
     }
 
     #gpio4.LOW {
@@ -43,4 +38,6 @@
     #gpio22.HIGH {
             background-color: Yellow;
     }
-</style>
+
+/*</style>
+*/
