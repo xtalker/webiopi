@@ -1,0 +1,46 @@
+<style type="text/css">
+
+    #mailSubj {
+            display: block;
+            margin: 5px 5px 5px 5px;
+            width: 760px;
+            height: 45px;
+            font-size: 12pt;
+            font-weight: bold;
+            color: blue;
+    }
+
+    button {
+            display: block;
+            margin: 5px 5px 5px 5px;
+            width: 200px;
+            height: 45px;
+            font-size: 24pt;
+            font-weight: bold;
+            color: blue;
+    }
+
+    #gpio4.LOW {
+            background-color: Black;
+    }
+    
+    #gpio4.HIGH {
+            background-color: Red;
+    }
+    #gpio10.LOW {
+            background-color: Black;
+    }
+    
+    #gpio10.HIGH {
+            background-color: Yellow;
+    }
+    #gpio17.HIGH {
+            background-color: Red;
+    }
+    #gpio9.HIGH {
+            background-color: Green;
+    }
+    #gpio22.HIGH {
+            background-color: Yellow;
+    }
+</style>
