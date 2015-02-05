@@ -24,8 +24,8 @@ BUZZ = 8
 HOUR_ON  = 8  # Turn Light ON at 08:00
 HOUR_OFF = 18 # Turn Light OFF at 18:00
 LOOP_CNT = 60 
-LAST_MAIL_CNT = 0
-NEW_MAIL_CNT = 0
+LAST_MAIL_CNT = 0;  NEW_MAIL_CNT = 0;
+Temp3 = 0;  Humid3 = 0;     Bat3 = 0;
 BRAVIATV = '192.168.0.3'
 TVState1 = 0;  TVState2 = 0
  
@@ -71,7 +71,8 @@ def setup():
 
 # WebIOPi script loop
 def loop():
-    global LOOP_CNT, NEW_MAIL_CNT, LAST_MAIL_CNT, VFDPORT, SUBJECT, TVState1, TVState2, BRAVIATV
+    global LOOP_CNT, NEW_MAIL_CNT, LAST_MAIL_CNT, VFDPORT, SUBJECT, TVState1, TVState2
+    global BRAVIATV, Temp3, Humid3, Bat3
 
     t = time.time()
     ts = datetime.datetime.fromtimestamp(t).strftime('%m/%d-%H:%M')
@@ -121,10 +122,10 @@ def loop():
         # Temp/humidity sensor node
         match = re.search(':N:3:T:(\d+):H:(\d+):B:([0-9.]+):', wgLine)
         if match:
-            temp = match.group(1)
-            humid = match.group(2)
-            bat = match.group(3)
-            vfdOut (vfdPort, str(unichr(0x0c))+ts+" Temp: "+temp+" Humid: "+humid+" Bat: "+bat, 5)
+            Temp3 = match.group(1)
+            Humid3 = match.group(2)
+            Bat3 = match.group(3)
+            vfdOut (vfdPort, str(unichr(0x0c))+ts+" Temp: "+Temp3+" Humid: "+Humid3+" Bat: "+Bat3, 5)
 
 
     #################################################################
@@ -159,8 +160,16 @@ def destroy():
 
 # Macros
 @webiopi.macro
+# Email status
 def checkMail():
+    webiopi.debug("checkMail called")
     return "%d,%s" % (NEW_MAIL_CNT, SUBJECT)
+
+@webiopi.macro
+# Wireless temp/humid sensor, node #3
+def wsTemp3():
+    webiopi.debug("wsTemp3 called: %s" % (Temp3))
+    return "%s,%s,%s" % (Temp3, Humid3, Bat3)
 
 @webiopi.macro
 def setLightHours(on, off):
