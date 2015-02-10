@@ -1,22 +1,81 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<html lang="en">
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>WebIOPi | Light Control</title>
     <script type="text/javascript" src="/webiopi.js"></script>
     <script type="text/javascript" src="script.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    <script src="resources/js/raphael.2.1.0.min.js"></script>
+    <script src="resources/js/justgage.js"></script>
+
 </head>
 
 <body>
-    <center><H1>Home Automation</H1></center>
-        <div id="controls" align="center"></div>
+
+<div class="container">
+
+    <nav id="myNavbar" class="navbar navbar-default navbar-inverse navbar-fixed-top" role="navigation">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbarCollapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Home Control Panel</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="http://www.tutorialrepublic.com" target="_blank">Home</a></li>
+                    <li><a href="http://www.tutorialrepublic.com/about-us.php" target="_blank">About</a></li>
+                    <li><a href="http://www.tutorialrepublic.com/contact-us.php" target="_blank">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="row">
+        <h3>GPIO</h3>
+        <p>This section has GPIO control</p>    
+        <div id="controls" class="col-lg-12">
+        </div>
+    </row>
+        
+    <h3>Gauges</h3>   
+    Wireless Sensor #3, Last Report:  
+    <label id="t3_time">??</label>  
+    <div class="row">
+        <div id="gauge1" class="col-xs-2"> 
+        </div>
+        <div id="gauge2" class="col-xs-2">    
+        </div>
+        <div id="gauge3" class="col-xs-2">    
+        </div>
+        <div id="gauge4" class="col-xs-1">    
+        </div>
+    </div>    
+
+</div>
+
+
+ <!--         <div id="controls" align="center"></div>
         <div align="center">
                 Turn On at :<input type="text" id="inputOn" /><br/>
                 Turn Off at: <input type="text" id="inputOff" /><br/>
                 
-                Label: <label id="TestLabel">Test lable</label>
+                <Label: <label id="TestLabel">Test lable</label>
                 
                 <div id="controls"></div>
                 <br><br>
@@ -24,14 +83,25 @@
         </div>
 
     <! Google gauge>
-    <script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1','packages':['gauge']}]}">
-    </script>
-    <div id="chart_div1" style="width: 800px; height: 200px; " align="center">
-        <label>This a is an extra long test lable that doesnt show up!</label>
+    <script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1','packages':['gauge']}]}"></script>
+
+    <div id="chart_div1" style="width: 800px; height: 175px; " align="center">
+        <label>Div1</label>
     </div>
     <div id="chart_div2" style="width: 800px; height: 120px; " align="center">
-        <label>Div2</label>
+           <label>Div2</label>
     </div>
+ 
+     <div class="container">
+        <div class="row">
+            <div id="chart_div2" class="col-sm-6 col-md-4 col-lg-3"><p>Box: 1</p></div>
+            <div class="col-sm-6 col-md-4 col-lg-3"><p>Box 2</p></div>
+            <div class="clearfix visible-sm-block"></div>
+            <div class="col-sm-6 col-md-4 col-lg-3"><p>Box 3</p></div>
+            <div class="clearfix visible-md-block"></div>
+        </div>
+    </div>
+ -->
 
 </body>
 

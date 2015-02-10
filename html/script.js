@@ -3,7 +3,7 @@ webiopi().ready(function() {
 
     // Globals
     var UnreadCnt = 0;
-    var Temp3 = 0;
+    var Temp3 = 0; Humid3 = 0; Bat3 = 0; Last3 = "-";
     
     // Create a button to call setLightHours macro
     var sendButton = webiopi().createButton("testButton", "Test", function() {
@@ -49,7 +49,8 @@ webiopi().ready(function() {
         Temp3 = temp[0];
         Humid3 = temp[1];
         Bat3 = temp[2];
-        //console.log("Temp3 = %o : %o : %o",Temp3,Humid3,Bat3)
+        Last3 = temp[3];
+        console.log("Temp3 = %o : %o : %o : %o",Temp3,Humid3,Bat3,Last3)
     }
 
     setInterval (callMailMacro, 6000);
@@ -59,54 +60,64 @@ webiopi().ready(function() {
     // pass true to refresh repeatedly of false to refresh once
     webiopi().refreshGPIO(true);
 
+    var t3_1 = new JustGage({
+    id: "gauge1",
+    value: Temp3,
+    min: 0,
+    max: 100,
+    symbol: '°',
+    customSectors: [{
+      color : "#008000", // Yellow
+      lo : 0,
+      hi : 60
+    },{
+      color : "#FFFF00",  // Green
+      lo : 60,
+      hi : 70
+    }, {
+      color : "#FF0000", // Red
+      lo : 70,
+      hi : 100
+    }],
+    relativeGaugeSize: true,
+    title: "Temperature"
+    });
 
-    // Google gauge
-    // https://developers.google.com/chart/interactive/docs/gallery/gauge
-    //google.setOnLoadCallback(drawChart);
-    $(document).ready(drawChart);
+    var t3_2 = new JustGage({
+    id: "gauge2",
+    value: Humid3,
+    min: 0,
+    max: 100,
+    symbol: '%',
+    relativeGaugeSize: true,
+    title: "Humidity"
+    });
 
-      function drawChart() {
+    var t3_3 = new JustGage({
+    id: "gauge3",
+    value: Bat3,
+    min: 0,
+    max: 10,
+    decimals: 2,
+    symbol: 'V',
+    customSectors: [{
+      color : "#FFFF00",  // Red
+      lo : 0,
+      hi : 5
+    },{
+      color : "#008000",  // Green
+      lo : 5,
+      hi : 10
+    }],
+    relativeGaugeSize: true,
+    title: "Sensor Battery"
+    });
 
-        var data = google.visualization.arrayToDataTable([
-          ['Label', 'Value'],
-          ['Unread Mail', 0],
-          ['Humidity', 0],
-          ['Battery', 0],
-        ]);
-
-        var tempData = google.visualization.arrayToDataTable([
-          ['Label', 'Value'],
-          ['Temperature', Temp3],
-        ]);
-          
-        var options = {
-          min: 0, max: 100, width: 500, height: 200, redFrom: 90, redTo: 100,
-          yellowFrom:75, yellowTo: 90, minorTicks: 10
-        };
-
-        var tempOptions = {
-          min: 50, max: 85, width: 475, height: 175, redFrom: 80, redTo: 85,
-          yellowFrom: 60, yellowTo: 80, greenFrom: 50, greenTo: 60, minorTicks: 10
-        };
-
-        var meter = new google.visualization.Gauge(document.getElementById('chart_div1'));
-        var tempMeter = new google.visualization.Gauge(document.getElementById('chart_div2'));
-
-        meter.draw(data, options);
-        tempMeter.draw(tempData, tempOptions);
-
-        setInterval(function() {
-          data.setValue(0, 1, UnreadCnt);
-          data.setValue(1, 1, Humid3);
-          data.setValue(2, 1, Bat3);
-          meter.draw(data, options);
-        }, 6000);
-
-        setInterval(function() {
-          tempData.setValue(0, 1, Temp3);
-          tempMeter.draw(tempData, tempOptions);
-        }, 6000);
-
-    }
+    setInterval(function() {
+    t3_1.refresh(Temp3);
+    t3_2.refresh(Humid3);
+    t3_3.refresh(Bat3);
+    document.getElementById("t3_time").innerText=Last3;
+    }, 6000);
 
 });

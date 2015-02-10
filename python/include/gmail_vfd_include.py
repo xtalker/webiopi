@@ -9,6 +9,7 @@ global clrTimer
 def pinger(address, wait):
 
     response = os.system("ping -c 1 -q -W " + str(wait) + " " + address + " > /dev/null 2>&1")
+    #response = os.system("nmap -sn --max-retries " + str(wait) + " " + address + " > /dev/null 2>&1")
     # 256 = no response, 0 = responded
 
     #print "Pinger: Response: " + str(response) 

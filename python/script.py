@@ -28,6 +28,7 @@ LAST_MAIL_CNT = 0;  NEW_MAIL_CNT = 0;
 Temp3 = 0;  Humid3 = 0;     Bat3 = 0;
 BRAVIATV = '192.168.0.3'
 TVState1 = 0;  TVState2 = 0
+TS = ''
  
 # Serial Ports, retrieve devices named in the config file
 vfdPort = webiopi.deviceInstance("vfdPort") 
@@ -53,7 +54,7 @@ def setup():
     webiopi.debug ("Python ver: %s" % (sys.version))
 
     t = time.time()
-    ts = datetime.datetime.fromtimestamp(t).strftime('%m/%d-%H:%M')
+    TS = datetime.datetime.fromtimestamp(t).strftime('%m/%d-%H:%M')
 
     # Set the output GPIOs
     GPIO.setFunction(RED1, GPIO.OUT);   GPIO.setFunction(YEL1, GPIO.OUT)
@@ -63,7 +64,7 @@ def setup():
     # Init vfd clear timer
     gmail_vfd_include.clrTimer = TimerReset(1, vfdClear, args=[vfdPort])
 
-    vfdOut (vfdPort, "Web Server Started at %s" % ts, 10)
+    vfdOut (vfdPort, "Web Server Started at %s" % TS, 10)
 
     # Clear out wireless gateway serial port
     while (wgPort.available() > 0):
@@ -72,10 +73,10 @@ def setup():
 # WebIOPi script loop
 def loop():
     global LOOP_CNT, NEW_MAIL_CNT, LAST_MAIL_CNT, VFDPORT, SUBJECT, TVState1, TVState2
-    global BRAVIATV, Temp3, Humid3, Bat3
+    global BRAVIATV, Temp3, Humid3, Bat3, TS
 
     t = time.time()
-    ts = datetime.datetime.fromtimestamp(t).strftime('%m/%d-%H:%M')
+    TS = datetime.datetime.fromtimestamp(t).strftime('%m/%d-%H:%M')
 
     #webiopi.debug ("LOOPING!")
 
@@ -97,7 +98,7 @@ def loop():
                 time.sleep(0.1)
                 GPIO.digitalWrite(BUZZ, GPIO.LOW)
                 #webiopi.debug("\n%s: You have %i new emails! Last: %i\n" % 
-                #    (ts,NEW_MAIL_CNT,LAST_MAIL_CNT))
+                #    (TS,NEW_MAIL_CNT,LAST_MAIL_CNT))
                 LAST_MAIL_CNT = NEW_MAIL_CNT
                 vfdPort.write(" " * 25)          
                 vfdOut (vfdPort, "Subj: %s" % SUBJECT, 30)
@@ -115,7 +116,7 @@ def loop():
 
       # # Motion detect node
         if re.search(':N:2:MOTION:B:', wgLine):
-            vfdOut (vfdPort, str(unichr(0x0c)) + ts + " Motion!", 5)
+            vfdOut (vfdPort, str(unichr(0x0c)) + TS + " Motion!", 5)
             myisy.var_set_value('Gmail', 100)
             myisy.var_set_value('Gmail', 0)
 
@@ -125,7 +126,7 @@ def loop():
             Temp3 = match.group(1)
             Humid3 = match.group(2)
             Bat3 = match.group(3)
-            vfdOut (vfdPort, str(unichr(0x0c))+ts+" Temp: "+Temp3+" Humid: "+Humid3+" Bat: "+Bat3, 5)
+            vfdOut (vfdPort, str(unichr(0x0c))+TS+" Temp: "+Temp3+" Humid: "+Humid3+" Bat: "+Bat3, 5)
 
 
     #################################################################
@@ -134,10 +135,10 @@ def loop():
     if TVState1 != TVState2:
       if TVState1:
         myisy.var_set_value('TVstate', 1)
-        vfdOut (vfdPort, ts + " TV On", 5)
+        vfdOut (vfdPort, TS + " TV On", 5)
       else:
         myisy.var_set_value('TVstate', 0)
-        vfdOut (vfdPort, ts + " TV Off", 5)
+        vfdOut (vfdPort, TS + " TV Off", 5)
       TVState2 = TVState1
 
     
@@ -168,8 +169,8 @@ def checkMail():
 @webiopi.macro
 # Wireless temp/humid sensor, node #3
 def wsTemp3():
-    webiopi.debug("wsTemp3 called: %s" % (Temp3))
-    return "%s,%s,%s" % (Temp3, Humid3, Bat3)
+    webiopi.debug("wsTemp3 called: %s" % (TS))
+    return "%s,%s,%s,%s" % (Temp3, Humid3, Bat3, TS)
 
 @webiopi.macro
 def setLightHours(on, off):
