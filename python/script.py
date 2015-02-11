@@ -1,6 +1,6 @@
 # Start with: sudo webiopi -d -c /etc/webiopi/config
 import webiopi
-import datetime, time, sys, urllib2, re
+import datetime, time, sys, urllib2, re, urllib
 
 webiopi.setDebug()
 
@@ -29,6 +29,7 @@ Temp3 = 0;  Humid3 = 0;     Bat3 = 0;
 BRAVIATV = '192.168.0.3'
 TVState1 = 0;  TVState2 = 0
 TS = ''
+ThingspeakAPIKey = "D2UM25SKF7NOK8PT"
  
 # Serial Ports, retrieve devices named in the config file
 vfdPort = webiopi.deviceInstance("vfdPort") 
@@ -73,7 +74,7 @@ def setup():
 # WebIOPi script loop
 def loop():
     global LOOP_CNT, NEW_MAIL_CNT, LAST_MAIL_CNT, VFDPORT, SUBJECT, TVState1, TVState2
-    global BRAVIATV, Temp3, Humid3, Bat3, TS
+    global BRAVIATV, Temp3, Humid3, Bat3, TS, ThingspeakAPIKey
 
     t = time.time()
     TS = datetime.datetime.fromtimestamp(t).strftime('%m/%d-%H:%M')
@@ -119,6 +120,8 @@ def loop():
             vfdOut (vfdPort, str(unichr(0x0c)) + TS + " Motion!", 5)
             myisy.var_set_value('Gmail', 100)
             myisy.var_set_value('Gmail', 0)
+            #gmail_vfd_include.webDataLog (webiopi, 'field3', 1, 'field3', 0)
+            #gmail_vfd_include.webDataLog (webiopi, 3, 0)
 
         # Temp/humidity sensor node
         match = re.search(':N:3:T:(\d+):H:(\d+):B:([0-9.]+):', wgLine)
@@ -127,6 +130,9 @@ def loop():
             Humid3 = match.group(2)
             Bat3 = match.group(3)
             vfdOut (vfdPort, str(unichr(0x0c))+TS+" Temp: "+Temp3+" Humid: "+Humid3+" Bat: "+Bat3, 5)
+            params = urllib.urlencode({'field1': Temp3, 'field2': Humid3, 'key':ThingspeakAPIKey})
+            gmail_vfd_include.webDataLog (webiopi, params)
+            #gmail_vfd_include.webDataLog (webiopi, 2, Humid3)
 
 
     #################################################################
