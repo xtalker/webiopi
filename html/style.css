@@ -1,52 +1,54 @@
-/*<style type="text/css">
-*/
-    button {
-            display: block;
-            margin: 5px 5px 5px 5px;
-            width: 200px;
-            height: 45px;
-            font-size: 24pt;
-            font-weight: bold;
-            color: blue;
-    }
+body { background: #99C2FF !important;}
 
-    #mailSubj{
-            font-size: 12pt;
-            width: 500px;
-    }
+button {
+        display: block;
+        margin: 5px 5px 5px 5px;
+        width: 100px;
+        height: 45px;
+        font-size: 10pt;
+        font-weight: bold;
+        color: gray;
+}
 
-    #gpio4.LOW {
-            background-color: Black;
-    }
-    
-    #gpio4.HIGH {
-            background-color: Red;
-    }
-    #gpio10.LOW {
-            background-color: Black;
-    }
-    
-    #gpio10.HIGH {
-            background-color: Yellow;
-    }
-    #gpio17.HIGH {
-            background-color: Red;
-    }
-    #gpio9.HIGH {
-            background-color: Green;
-    }
-    #gpio22.HIGH {
-            background-color: Yellow;
-    }
+#gpio4.LOW {
+        background-color: gray;
+}
+
+#gpio4.HIGH {
+        background-color: Red;
+}
+#gpio10.LOW {
+        background-color: gray;
+}
+
+#gpio10.HIGH {
+        background-color: Yellow;
+}
+#gpio17.LOW {
+        background-color: gray;
+}
+#gpio17.HIGH {
+        background-color: Red;
+}
+#gpio9.LOW {
+        background-color: gray;
+}
+#gpio9.HIGH {
+        background-color: Green;
+}
+#gpio22.LOW {
+        background-color: gray;
+}
+#gpio22.HIGH {
+        background-color: Yellow;
+}
 
 /*    p{
-        padding: 50px;
-        font-size: 42px;
-        font-weight: bold;
-        text-align: center;
-        background: #f2f2f2;
-    }
+    padding: 50px;
+    font-size: 42px;
+    font-weight: bold;
+    text-align: center;
+    background: #f2f2f2;
+}
 */
 
-/*</style>
-*/

@@ -4,7 +4,6 @@
 from threading import Thread, Event, Timer
 import time
 import webiopi
-
 import gmail_vfd_include
 
 
@@ -12,7 +11,6 @@ import gmail_vfd_include
 def vfdClear(port):
     #print "vfdClear: Clear display, port: %s" % port.name
     port.write(str(unichr(0x0c)))  # clear (0C)
-
 
 # Function to send message to VFD
 def vfdOut(port, msg, timeout):

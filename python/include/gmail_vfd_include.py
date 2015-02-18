@@ -1,9 +1,9 @@
 # Gmail checker include
-import os, urllib2, feedparser, httplib
+import os, urllib2, feedparser, httplib, urllib
 
 #VFD_CLR_TIMEOUT = 30
 
-global clrTimer
+global clrTimer, motion1Timer
 
 # Log data to online logging service (thingspeak.com)
 # Field#s: 1=Temp3, 2=Humid3, 3=Motion1 

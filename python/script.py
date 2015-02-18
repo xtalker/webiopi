@@ -25,11 +25,12 @@ HOUR_ON  = 8  # Turn Light ON at 08:00
 HOUR_OFF = 18 # Turn Light OFF at 18:00
 LOOP_CNT = 60 
 LAST_MAIL_CNT = 0;  NEW_MAIL_CNT = 0;
-Temp3 = 0;  Humid3 = 0;     Bat3 = 0;
+Temp3 = 0;  Humid3 = 0;  Light3 = 0; Bat3 = 0;
 BRAVIATV = '192.168.0.3'
 TVState1 = 0;  TVState2 = 0
 TS = ''
 ThingspeakAPIKey = "D2UM25SKF7NOK8PT"
+Motion2 = 0
  
 # Serial Ports, retrieve devices named in the config file
 vfdPort = webiopi.deviceInstance("vfdPort") 
@@ -74,12 +75,11 @@ def setup():
 # WebIOPi script loop
 def loop():
     global LOOP_CNT, NEW_MAIL_CNT, LAST_MAIL_CNT, VFDPORT, SUBJECT, TVState1, TVState2
-    global BRAVIATV, Temp3, Humid3, Bat3, TS, ThingspeakAPIKey
+    global BRAVIATV, Temp3, Humid3, Light3, Bat3, TS, ThingspeakAPIKey, Motion2
 
     t = time.time()
     TS = datetime.datetime.fromtimestamp(t).strftime('%m/%d-%H:%M')
 
-    #webiopi.debug ("LOOPING!")
 
     #################################################################
     # Check unread gmails once per minute
@@ -115,25 +115,24 @@ def loop():
         wgLine = wgPort.readString() 
         webiopi.debug (wgLine)
 
-      # # Motion detect node
+      # # Motion detect node #2
         if re.search(':N:2:MOTION:B:', wgLine):
             vfdOut (vfdPort, str(unichr(0x0c)) + TS + " Motion!", 5)
+            # Set Motion for node2 (reset every minute when logged to web)
+            Motion2 = 1
+            # Toggle an ISY var that will light a keypad indicator
             myisy.var_set_value('Gmail', 100)
             myisy.var_set_value('Gmail', 0)
-            #gmail_vfd_include.webDataLog (webiopi, 'field3', 1, 'field3', 0)
-            #gmail_vfd_include.webDataLog (webiopi, 3, 0)
 
-        # Temp/humidity sensor node
-        match = re.search(':N:3:T:(\d+):H:(\d+):B:([0-9.]+):', wgLine)
+        # Temp/humidity sensor, node #3
+        match = re.search(':N:3:T:(\d+):H:(\d+):L:(\d+):B:([0-9.]+):', wgLine)
         if match:
             Temp3 = match.group(1)
             Humid3 = match.group(2)
-            Bat3 = match.group(3)
-            vfdOut (vfdPort, str(unichr(0x0c))+TS+" Temp: "+Temp3+" Humid: "+Humid3+" Bat: "+Bat3, 5)
-            params = urllib.urlencode({'field1': Temp3, 'field2': Humid3, 'key':ThingspeakAPIKey})
-            gmail_vfd_include.webDataLog (webiopi, params)
-            #gmail_vfd_include.webDataLog (webiopi, 2, Humid3)
-
+            Light3 = match.group(3)
+            Bat3 = match.group(4)
+            #webiopi.debug ("Light3: %s Bat3: %s" % (Light3,Bat3))
+            vfdOut (vfdPort, str(unichr(0x0c))+"    "+TS+" Temp: "+Temp3+" Humid: "+Humid3+" Light: "+Light3+" Bat: "+Bat3, 5)
 
     #################################################################
     # Check if the TV changes state, update an ISY var if it does
@@ -152,11 +151,24 @@ def loop():
     value = not GPIO.digitalRead(YEL1)
     GPIO.digitalWrite(YEL1, value)
     
+    ####### Update timers and counters #######
+
+    # Count up to 60 seconds then reset
     LOOP_CNT += 1
     if LOOP_CNT > 60:
         LOOP_CNT = 0
 
-    # 1 sec loop time
+        ####### Event that happen once per minute #######
+
+        # Log stuff to Thingspeak (can only log stuff once every 15 secs max)
+        if Humid3 != 0:
+            #webiopi.debug ("T: %s, H: %s, L: %s, B: %s, M: %s" % (Temp3,Humid3,Light3,Bat3,Motion2))
+            params = urllib.urlencode({'field1': Temp3, 'field2': Humid3, 'field3': Motion2, 'key':ThingspeakAPIKey})
+            gmail_vfd_include.webDataLog (webiopi, params)
+            Motion2 = 0
+ 
+
+    ####### 1 sec loop time #########
     webiopi.sleep(1)
 
 # Called at WebIOPi shutdown
@@ -175,8 +187,8 @@ def checkMail():
 @webiopi.macro
 # Wireless temp/humid sensor, node #3
 def wsTemp3():
-    webiopi.debug("wsTemp3 called: %s" % (TS))
-    return "%s,%s,%s,%s" % (Temp3, Humid3, Bat3, TS)
+    webiopi.debug("wsTemp3 called: %s" % (Light3))
+    return "%s,%s,%s,%s,%s,%s" % (Temp3, Humid3, Light3, Bat3, Motion2, TS)
 
 @webiopi.macro
 def setLightHours(on, off):

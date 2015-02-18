@@ -4,23 +4,26 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>WebIOPi | Light Control</title>
+    <title>Chaos House Control Panel</title>
     <script type="text/javascript" src="/webiopi.js"></script>
     <script type="text/javascript" src="script.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css">
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!--script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> 
+    -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-    <script src="resources/js/raphael.2.1.0.min.js"></script>
+    <!-- Justgage -->
+    <script src="resources/js/raphael.2.1.2.min.js"></script>
     <script src="resources/js/justgage.js"></script>
 
 </head>
 
 <body>
 
-<div class="container">
+<div class="container-fluid">
 
     <nav id="myNavbar" class="navbar navbar-default navbar-inverse navbar-fixed-top" role="navigation">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -37,9 +40,9 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="http://www.tutorialrepublic.com" target="_blank">Home</a></li>
-                    <li><a href="http://www.tutorialrepublic.com/about-us.php" target="_blank">About</a></li>
-                    <li><a href="http://www.tutorialrepublic.com/contact-us.php" target="_blank">Contact</a></li>
+                    <li class="active"><a href="http://http://192.168.0.16:8000">Home</a></li>
+                    <li><a href="http://192.168.0.16:8000/app/gpio-header">GPIO Header</a></li>
+                    <li><a href="http://http://192.168.0.16:8000/app/serial-monitor">Serial Monitor</a></li>
                 </ul>
             </div>
         </div>
@@ -49,39 +52,48 @@
     <h3>GPIO</h3>
     <p>This section has GPIO control</p>    
     <div class="row" style ='background-color: #99C2FF;'>
-        <div id="controls" class="col-xs-2"></div>
-        <div               class="col-xs-1"></div>
-        <div id="email_1"  class="col-xs-2"></div>
-        <div               class="col-xs-6">
+        <div id="controls" class="col-sm-2"></div>
+        <div               class="col-sm-1"></div>
+        <div id="email_1"  class="col-sm-2"></div>
+        <div               class="col-sm-6">
             <H3>Last Subject:</H3>
             <H4 id="email_2_subject">??</H4>  
         </div>
     </div>
         
     <h3>Sensors</h3>   
-    Wireless Sensor #3, Last Report:  
-    <label id="t3_time">??</label>  
     <div class="row" style ='background-color: #99C2FF;'>
-        <div id="gauge_t3_1" class="col-xs-2"></div>
-        <div id="gauge_t3_2" class="col-xs-2"></div>
-        <div id="gauge_t3_3" class="col-xs-2"></div>
-        <div id="gauge_t3_4" class="col-xs-1"></div>
+        <div id="gauge_t3_1" class="col-sm-2">
+            <b>Wireless Sensor #3</b>,   
+        </div>
+        <div id="gauge_t3_2" class="col-sm-2">
+            Last Report:  <label id="t3_time">??</label></div>
+        <div id="gauge_t3_3" class="col-sm-2"></div>
+        <div id="gauge_t3_4" class="col-sm-2"></div>
+
+        <div id="gauge_m2_1" class="col-sm-2"><b>Wireless Sensor #2</b></div>
     </div>
 
     <h3>Graphs</h3>   
     <div class="row" style ='background-color: #99C2FF;'>
-        <div class="col-xs-6">
-
-            <iframe width="450" height="260" style="border: 1px solid #cccccc;" src="http://api.thingspeak.com/channels/26234/charts/1?key=D2UM25SKF7NOK8PT&width=450&height=260&timescale=10&days=1&dynamic=true&type=spline&yaxis=Degrees%20F&title=Wireless%20Sensor%20-%20Temperature" ></iframe>
+        <div class="col-sm-6">
+            <!-- Temp3 Chart -->
+            <iframe width="450" height="260" style="border: 1px solid #cccccc;" src="http://api.thingspeak.com/channels/26234/charts/1?key=D2UM25SKF7NOK8PT&width=450&height=260&timescale=20&days=1&dynamic=true&type=spline&yaxis=Degrees%20F&title=Wireless%20Sensor%20%233%20-%20Temperature" ></iframe>
 
         </div>
-        <div  class="col-xs-6">
-
-            <iframe width="450" height="260" style="border: 1px solid #cccccc;" src="http://api.thingspeak.com/channels/26234/charts/2?key=D2UM25SKF7NOK8PT&width=450&height=260&timescale=10&days=1&dynamic=true&type=spline&yaxis=Humidity%20%25&title=Wireless%20Sensor%20-%20Humidity" ></iframe>
+        <div  class="col-sm-6">
+            <!-- Humid3 Chart -->
+            <iframe width="450" height="260" style="border: 1px solid #cccccc;" src="http://api.thingspeak.com/channels/26234/charts/2?key=D2UM25SKF7NOK8PT&width=450&height=260&timescale=20&days=1&dynamic=true&type=spline&yaxis=Humidity%20%25&title=Wireless%20Sensor%20%233%20-%20Humidity" ></iframe>
 
         </div>
     </div>
 
+    <div class="row" style ='background-color: #99C2FF;'>
+        <div class="col-sm-6">
+            <!-- Motion2 Chart -->
+            <iframe width="450" height="260" style="border: 1px solid #cccccc;" src="http://api.thingspeak.com/channels/26234/charts/3?key=D2UM25SKF7NOK8PT&width=450&height=260&yaxismax=1&yaxismin=0&max=1&min=0&days=1&dynamic=true&type=line&color=Green&title=Wireless%20Sensor%20%232%20-%20Motion" ></iframe>
+        </div>
+    </div>
 
 </div>
 
