@@ -25,12 +25,13 @@ HOUR_ON  = 8  # Turn Light ON at 08:00
 HOUR_OFF = 18 # Turn Light OFF at 18:00
 LOOP_CNT = 60 
 LAST_MAIL_CNT = 0;  NEW_MAIL_CNT = 0;
-Temp3 = 0;  Humid3 = 0;  Light3 = 0; Bat3 = 0;
+Motion2 = 0; Node2TS=""; Bat2=0;
+Temp3 = 0;  Humid3 = 0;  Light3 = 0; Bat3 = 0; Node3TS="";
+Temp4 = 0;  Humid4 = 0;  Light4 = 0; Bat4 = 0; Node4TS="";
 BRAVIATV = '192.168.0.3'
 TVState1 = 0;  TVState2 = 0
 TS = ''
 ThingspeakAPIKey = "D2UM25SKF7NOK8PT"
-Motion2 = 0
  
 # Serial Ports, retrieve devices named in the config file
 vfdPort = webiopi.deviceInstance("vfdPort") 
@@ -75,7 +76,10 @@ def setup():
 # WebIOPi script loop
 def loop():
     global LOOP_CNT, NEW_MAIL_CNT, LAST_MAIL_CNT, VFDPORT, SUBJECT, TVState1, TVState2
-    global BRAVIATV, Temp3, Humid3, Light3, Bat3, TS, ThingspeakAPIKey, Motion2
+    global BRAVIATV, ThingspeakAPIKey
+    global Motion2, Node2TS, Bat2
+    global Temp3, Humid3, Light3, Bat3, Node3TS 
+    global Temp4, Humid4, Light4, Bat4, Node4TS 
 
     t = time.time()
     TS = datetime.datetime.fromtimestamp(t).strftime('%m/%d-%H:%M')
@@ -115,15 +119,18 @@ def loop():
         wgLine = wgPort.readString() 
         webiopi.debug (wgLine)
 
-      # # Motion detect node #2
-        if re.search(':N:2:MOTION:B:', wgLine):
-            vfdOut (vfdPort, str(unichr(0x0c)) + TS + " Motion!", 5)
+        # Motion detect node #2
+        match = re.search(':N:2:MOTION:B:([0-9.]+):', wgLine)
+        if match:
+            Bat2 = match.group(1)
             # Set Motion for node2 (reset every minute when logged to web)
             Motion2 = 1
+            Node2TS = TS
             # Toggle an ISY var that will light a keypad indicator
             myisy.var_set_value('Gmail', 100)
             myisy.var_set_value('Gmail', 0)
-
+            vfdOut (vfdPort, str(unichr(0x0c)) + Node2TS + " Motion! Bat: " + Bat2, 5)
+ 
         # Temp/humidity sensor, node #3
         match = re.search(':N:3:T:(\d+):H:(\d+):L:(\d+):B:([0-9.]+):', wgLine)
         if match:
@@ -131,8 +138,20 @@ def loop():
             Humid3 = match.group(2)
             Light3 = match.group(3)
             Bat3 = match.group(4)
+            Node3TS = TS
             #webiopi.debug ("Light3: %s Bat3: %s" % (Light3,Bat3))
-            vfdOut (vfdPort, str(unichr(0x0c))+"    "+TS+" Temp: "+Temp3+" Humid: "+Humid3+" Light: "+Light3+" Bat: "+Bat3, 5)
+            vfdOut (vfdPort, str(unichr(0x0c))+"    "+Node3TS+" Temp: "+Temp3+" Humid: "+Humid3+" Light: "+Light3+" Bat: "+Bat3, 5)
+
+        # Temp/humidity sensor, node #4
+        match = re.search(':N:4:T:(\d+):H:(\d+):L:(\d+):B:([0-9.]+):', wgLine)
+        if match:
+            Temp4 = match.group(1)
+            Humid4 = match.group(2)
+            Light4 = match.group(3)
+            Bat4 = match.group(4)
+            Node4TS = TS
+            #webiopi.debug ("Light4: %s Bat4: %s" % (Light4,Bat4))
+            #vfdOut (vfdPort, str(unichr(0x0c))+"    "+Node4TS+" Temp: "+Temp4+" Humid: "+Humid4+" Light: "+Light4+" Bat: "+Bat4, 5)
 
     #################################################################
     # Check if the TV changes state, update an ISY var if it does
@@ -177,22 +196,28 @@ def destroy():
     GPIO.digitalWrite(YEL1, GPIO.LOW);  GPIO.digitalWrite(YEL2, GPIO.LOW)
     GPIO.digitalWrite(BUZZ, GPIO.LOW);  GPIO.digitalWrite(GRN1, GPIO.LOW)
 
-# Macros
+#### Macros called by javascript ######
+
 @webiopi.macro
 # Email status
 def checkMail():
-    webiopi.debug("checkMail called")
+    #webiopi.debug("checkMail called")
     return "%d,%s" % (NEW_MAIL_CNT, SUBJECT)
 
 @webiopi.macro
-# Wireless temp/humid sensor, node #3
-def wsTemp3():
-    webiopi.debug("wsTemp3 called: %s" % (Light3))
-    return "%s,%s,%s,%s,%s,%s" % (Temp3, Humid3, Light3, Bat3, Motion2, TS)
+# Wireless motion sensor, node #2
+def wsNode2():
+    #webiopi.debug("wsNode2 called: %s" % (Motion2))
+    return "%s,%s,%s" % (Motion2, Bat2, Node2TS)
 
 @webiopi.macro
-def setLightHours(on, off):
-    global HOUR_ON, HOUR_OFF
-    HOUR_ON = int(on)
-    HOUR_OFF = int(off)
-    return getLightHours()
+# Wireless temp/humid sensor, node #3
+def wsNode3():
+    #webiopi.debug("wsNode3 called: %s" % (Light3))
+    return "%s,%s,%s,%s,%s" % (Temp3, Humid3, Light3, Bat3, Node3TS)
+
+@webiopi.macro
+# Wireless temp/humid sensor, node #4
+def wsNode4():
+    #webiopi.debug("wsNode4 called: %s" % (Light4))
+    return "%s,%s,%s,%s,%s" % (Temp4, Humid4, Light4, Bat4, Node4TS)

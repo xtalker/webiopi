@@ -42,7 +42,8 @@
                 <ul class="nav navbar-nav">
                     <li class="active"><a href="http://http://192.168.0.16:8000">Home</a></li>
                     <li><a href="http://192.168.0.16:8000/app/gpio-header">GPIO Header</a></li>
-                    <li><a href="http://http://192.168.0.16:8000/app/serial-monitor">Serial Monitor</a></li>
+                    <li><a href="http://192.168.0.16:8000/app/serial-monitor">Serial Monitor</a></li>
+                    <li><a href="http://192.168.0.10/WEB/udajax.htm#/nodes/devices/">Lighting</a></li>
                 </ul>
             </div>
         </div>
@@ -64,14 +65,34 @@
     <h3>Sensors</h3>   
     <div class="row" style ='background-color: #99C2FF;'>
         <div id="gauge_t3_1" class="col-sm-2">
-            <b>Wireless Sensor #3</b>,   
+            <b>Wireless Sensor #3</b><br>   
+            Last Report:  <label id="t3_time">??</label>
         </div>
         <div id="gauge_t3_2" class="col-sm-2">
-            Last Report:  <label id="t3_time">??</label></div>
+        </div>
         <div id="gauge_t3_3" class="col-sm-2"></div>
         <div id="gauge_t3_4" class="col-sm-2"></div>
+    </div>
 
-        <div id="gauge_m2_1" class="col-sm-2"><b>Wireless Sensor #2</b></div>
+    <div class="row" style ='background-color: #99C2FF;'>
+        <div id="gauge_t4_1" class="col-sm-2">
+            <b>Wireless Sensor #4</b><br>   
+            Last Report:  <label id="t4_time">??</label>
+        </div>
+        <div id="gauge_t4_2" class="col-sm-2">
+        </div>
+        <div id="gauge_t4_3" class="col-sm-2"></div>
+        <div id="gauge_t4_4" class="col-sm-2"></div>
+    </div>
+
+    <div class="row" style ='background-color: #99C2FF;'>
+        <div id="gauge_m2_1" class="col-sm-2">
+            <b>Wireless Sensor #2</b><br>
+            Last Report:  <label id="m2_time">??</label>
+        </div>
+        <div id="gauge_m2_2" class="col-sm-2"></div>
+        <div id="gauge_m2_3" class="col-sm-2"></div>
+        <div id="gauge_m2_4" class="col-sm-2"></div>
     </div>
 
     <h3>Graphs</h3>   
